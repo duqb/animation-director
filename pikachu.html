@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+  <title>画皮卡丘丘</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <style>
+    *{margin: 0; padding: 0; box-sizing: border-box;}
+    *::after{
+      box-sizing: border-box;
+    }
+    *::before{
+      box-sizing: border-box;
+    }
+    *{
+      transition: all 0.3s;
+    }
+    body{
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .code-wrapper{
+      flex:1;
+      height: 50%;
+      padding: 10px;
+    }
+    .preview-wrapper{
+      flex: 1;
+      height: 50%;
+    }
+    #code{
+      overflow: hidden;
+      height: 100%;
+    }
+    .actions{
+      position: absolute;
+      right: 0;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .actions>button{
+      margin: 10px;
+      background: #ddd;
+      padding: 8px 10px;
+      border: none;
+    }
+    .actions>button.active{
+      box-shadow: 1px 1px 1px rgba(0,0,0,0.8);
+    }
+    .actions>button:focus{
+      outline: none;
+    }
+    .wrapper{
+      width: 100%;
+      height: 165px;
+      position: relative;
+    }
+    .preview{
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+  <style id="styleTag"></style>
+</head>
+<body>
+  <div class="code-wrapper">
+    <pre id="code"></pre>
+  </div>
+  <div class="preview-wrapper">
+    <div class="preview">
+      <div class="wrapper">
+        <div class="lowerLip-wrapper">
+          <div class="lowerLip"></div>
+        </div>
+
+        <div class="nose"></div>
+        <div class="eye left"></div>
+        <div class="eye right"></div>
+        <div class="face left"></div>
+        <div class="face right"></div>
+        <div class="upperLip left"></div>
+        <div class="upperLip right"></div>
+
+      </div>
+    </div>
+  </div>
+  <div class="actions">
+    <button data-speed="slow">Slow</button>
+    <button data-speed="normal" class="active">Default</button>
+    <button data-speed="fast">Fast</button>
+  </div>
+  <script src="./vendor/jauery.min.js"></script>
+  <script>
+    !function(){
+      var duration = 50
+      $('.actions').on('click', 'button', function(e){
+        let $button = $(e.currentTarget) // button
+        let speed = $button.attr('data-speed')
+        $button.addClass('active')
+          .siblings('.active').removeClass('active')
+        switch(speed){
+          case 'slow':
+            duration = 100
+            break
+          case 'normal':
+            duration = 50
+            break
+          case 'fast':
+            duration = 10
+            break
+        }
+      });
+
+      function writeCode(prefix, code, fn){
+        let container = document.querySelector('#code')
+        let styleTag = document.querySelector('#styleTag')
+        let n = 0
+        let id
+        id = setTimeout(function run(){
+          n+=1
+          container.innerHTML = code.substring(0,n)
+          styleTag.innerHTML = code.substring(0,n)
+          container.scrollTop = container.scrollHeight
+          if(n < code.length){
+            id = setTimeout(run, duration)
+          }else{
+            fn && fn.call()
+          }
+        }, duration)
+      }
+
+      let code = `
+      /*
+      * 画皮
+      */
+      .preview{
+        background: #FEE433;
+      }
+      /*
+      * 画鼻子
+      */
+      .nose{
+        width: 0px;
+        height: 0px;
+        border-style: solid;
+        border-width: 12px;
+        border-color: black transparent transparent;
+        border-radius: 11px;
+        position: absolute;
+        left: 50%;
+        top: 28px;
+        margin-left: -12px;
+      }
+      /*
+      * 接下来，画眼睛
+      */
+      .eye{
+        width: 49px;
+        height: 49px;
+        background: #2E2E2E;
+        position: absolute;
+        border-radius: 50%;
+        border: 2px solid #000000;
+      }
+      /*
+      * 画眼珠
+      */
+      .eye::before{
+        content: '';
+        display: block;
+        width: 24px;
+        height: 24px;
+        background: white;
+        position: absolute;
+        border-radius: 50%;
+        left: 6px;
+        top:-1px;
+        border: 2px solid #000;
+      }
+      /*
+      * 左眼位置
+      */
+      .eye.left{
+        right: 50%;
+        margin-right: 90px;
+      }
+      /*
+      * 右眼位置
+      */
+      .eye.right{
+        left: 50%;
+        margin-left: 90px;
+      }
+      /*
+      * 画脸
+      */
+      .face{
+        width: 68px;
+        height: 68px;
+        background: #FC0D1C;
+        border: 2px solid black;
+        border-radius: 50%;
+        position: absolute;
+        top: 85px;
+      }
+      /*
+      * 脸的位置
+      */
+      .face.left{
+        right: 50%;
+        margin-right: 116px;
+      }
+      .face.right{
+        left: 50%;
+        margin-left: 116px;
+      }
+      /*
+      * 画上嘴唇
+      */
+      .upperLip{
+        height: 25px;
+        width: 80px;
+        border: 2px solid black;
+        position: absolute;
+        top: 50px;
+        background: #FDE348;
+      }
+      .upperLip.left{
+        right: 50%;
+        border-bottom-left-radius: 40px 25px;
+        border-top: none;
+        border-right: none;
+        transform: rotate(-20deg);
+      }
+      .upperLip.right{
+        left: 50%;
+        border-bottom-right-radius: 40px 25px;
+        border-top: none;
+        border-left: none;
+        transform: rotate(20deg);
+      }
+      /*
+      * 画下嘴唇
+      */
+      .lowerLip-wrapper{
+        bottom: 0;
+        position: absolute;
+        left: 50%;
+        margin-left: -150px;
+        height: 110px;
+        overflow: hidden;
+        width: 300px;
+      }
+      .lowerLip{
+        height: 3500px;
+        width: 300px;
+        background: #990513;
+        border-radius: 200px/2000px;
+        border: 2px solid black;
+        position: absolute;
+        bottom: 0;
+        overflow: hidden;
+      }
+      /*
+      * 画舌头
+      */
+      .lowerLip::after{
+        content: '';
+        position: absolute;
+        bottom: -20px;
+        width: 100px;
+        height: 100px;
+        background: #FC4A62;
+        left: 50%;
+        margin-left: -50px;
+        border-radius: 50px;
+      }
+      /* 代码区域隐藏 */
+        .code-wrapper {
+            display: none;
+        }
+      /* 全屏展示 */
+      .preview {
+          height: 100vh;
+      }
+      /*
+      * 皮卡丘画好了 ^_^
+      */`
+      writeCode('',code)
+    }.call()
+  </script>
+</body>
+</html>
